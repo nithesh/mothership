@@ -1,0 +1,29 @@
+- name: Set hostname
+  remote_user: root
+  hostname: name={{ ansible_hostname }}
+
+- name: Install packages
+  remote_user: root
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items:
+    - emacs
+    - git
+    - stow
+    - zsh
+
+- name: Create default user
+  remote_user: root
+  user: name={{ ansible_user_id }} groups=admins shell=/bin/zsh
+
+- name: Configure sudoers
+  remote_user: root
+  lineinfile: "dest=/etc/sudoers.d/30-dev owner=root group=root mode=0440
+              line='{{ ansible_user_id }} ALL=(ALL) NOPASSWD: ALL'
+              state=present
+              create=yes
+              validate='visudo -cf %s'"
+
+- name: Add authorized key
+  remote_user: root
+  authorized_key: user={{ ansible_user_id }}
+                  key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

@@ -1,0 +1,7 @@
+- name: Fetch configuration repository
+  git: repo=https://github.com/nithesh/dotfiles.git
+       dest=~/.files
+       depth=1
+
+- name: Apply zsh configuration
+  shell: stow zsh chdir=~/.files/
