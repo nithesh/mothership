@@ -27,3 +27,9 @@
   remote_user: root
   authorized_key: user={{ ansible_user_id }}
                   key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+- name: Set timezone
+  sudo: yes
+  copy: content='America/New_York' dest=/etc/timezone mode=0644
+  notify:
+    - Update timezone
